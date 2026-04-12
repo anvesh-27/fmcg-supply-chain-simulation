@@ -1,51 +1,176 @@
-# M-Bedded Enterprise: Supply Chain Financial Simulation
+# FMCG Supply Chain Financial Simulation Engine (M-Bedded)
 
-A high-fidelity Monte Carlo financial engine simulating the economic impact of upgrading FMCG packaging lines from traditional Hot Melt Adhesives (HMA) to the M-Bedded blister-seal hardware system.
-
-## 📌 Executive Summary
-The Indian FMCG supply chain suffers from a critical mechanical flaw: external straws detach from Tetra Paks during transit due to severe summer heat and humidity. Historically, this was a minor write-off in traditional "Kirana" retail. However, the rapid rise of **Quick Commerce (Modern Trade)**—with automated dark stores and strict Service Level Agreements (SLAs)—has weaponized this physical defect into a massive financial bleed. 
-
-This engine simulates a 90-Million-unit annual production line to prove the break-even timeline and net ROI of a ₹35 Lakh CAPEX hardware upgrade, factoring in thermodynamic failures, automated warehouse rejection logic, and factory floor efficiency gains.
+> A Python-based simulation engine that proves a ₹35L hardware upgrade becomes profitable by eliminating FMCG logistics losses and SLA penalties.
 
 ---
 
-## ⚙️ The Business Logic & Mathematical Modules
+## 🚨 Problem: The Quick Commerce Logistics Bleed
+
+In the Indian FMCG beverage industry, 200ml cartons with externally attached straws suffer failure rates of up to **12% during summer logistics** due to glue degradation (temperatures reaching 60°C).
+
+While traditional Kirana stores tolerate and manually fix defects, **modern quick commerce platforms (Zepto, Blinkit, Reliance)** enforce strict penalties:
+
+* ₹5 SLA fine per defective unit
+* 2.0× pallet rejection multiplier (collateral damage)
+* Zero tolerance in automated dark stores
+
+This converts a small physical defect into a **massive financial loss at scale**.
+
+---
+
+## 💡 Solution: M-Bedded Packaging System
+
+M-Bedded is a hardware-based packaging innovation that:
+
+* Eliminates glue-based straw attachment
+* Uses a **thermal blister sealing mechanism**
+* Achieves **0% logistics shrinkage**
+* Removes single-use BOPP plastic
+
+This project simulates a **90 million unit annual production line** to evaluate whether this ₹35 lakh CAPEX upgrade is financially viable.
+
+---
+
+## 📊 Key Results
+
+* Break-even achieved within months (mid-summer)
+* Eliminates up to **12% logistics failure losses**
+* Recovers ₹35L CAPEX within first operational cycle
+* Generates strong net annual profit through:
+
+  * SLA penalty avoidance
+  * Factory uptime (OEE) gains
+  * Tax shield benefits
+
+---
+
+## 🧠 What This Project Does
+
+This is a **financial simulation engine**, not a static calculator.
+
+It models:
+
+* Seasonal failure rates (temperature-driven)
+* Reverse logistics & salvage economics
+* Modern trade SLA penalties
+* Factory downtime vs uptime (OEE impact)
+* CAPEX depreciation and tax savings
+
+It answers:
+
+> **Is upgrading to M-Bedded financially justified for FMCG manufacturers?**
+
+---
+
+## ⚙️ Mathematical & Simulation Engine
 
 ### 1. Thermodynamic Seasonality (`data_generator.py`)
-The simulation does not use a flat failure rate. It applies a continuous sine-wave probability curve across a 365-day logistics calendar:
-* **Winter Baseline:** 2% baseline failure.
-* **Summer Peak:** Spikes to 12% in May/June when dry-freight truck cargo bays exceed the 55°C softening point of standard EVA hot-melt glue.
 
-### 2. Strict Stream Isolation (`financial_engine.py`)
-The engine dynamically splits rejected inventory based on the retailer type, applying different salvage math to each:
-* **Traditional (Kirana) Logistics:** Assumes lenient Acceptable Quality Levels (AQL). 60% of units are manually reworked (taped back on) for a minor ₹2.50 labor penalty.
-* **Modern Trade (Quick Commerce):** Assumes zero-tolerance automated warehouses. Triggers a `2.0x` Pallet Rejection Multiplier, forces 100% liquidation of rejected collateral, and applies a strict ₹5.00 corporate SLA fine strictly per defective unit.
-
-### 3. Manufacturing Economics (`financial_engine.py`)
-To ensure a robust "Hard Mode" financial model, the engine accounts for factory-floor realities:
-* **Relative OEE Profit:** Calculates the 1.5% machine uptime gained by eliminating HMA glue nozzle clogs, translating the extra production volume into actual revenue (filtered strictly through a 10% FMCG profit margin).
-* **CAPEX Tax Shield:** Deducts 15% machinery depreciation and 25% corporate tax credits from the M-Bedded operational burden to calculate the true recovery timeline.
+* Winter baseline: ~2% failure
+* Summer peak: ~12% failure (May–June)
+* Continuous probability curve across 365 days
 
 ---
 
-## 🏗️ Codebase Architecture
+### 2. Retail Stream Economics (`financial_engine.py`)
 
-* `config.py` — The Central Nervous System. Contains all global constants, unit economics, SLA percentages, and file paths.
-* `main.py` — The Orchestrator. Triggers the ETL pipeline in a strict, reproducible sequence.
-* `src/data_generator.py` — The Monte Carlo engine that builds synthetic shipment telemetry.
-* `src/financial_engine.py` — The core ROI calculator that crunches the logistics bleeds and factory credits.
-* `src/visualizer.py` — The Matplotlib rendering engine for executive pitch deck charts.
+* **Kirana (75%)**
+
+  * 60% units reworked
+  * Low penalty recovery
+
+* **Modern Trade (25%)**
+
+  * Strict SLA fines
+  * Pallet rejection multiplier
+  * High financial impact
 
 ---
 
-## 🚀 Installation & Usage
+### 3. Factory Economics (`financial_engine.py`)
 
-### Prerequisites
-* Python 3.9+
-* Recommended: Virtual Environment (`venv`)
+* OPEX penalty for new system
+* OEE-based revenue recovery (~1.5% uptime gain)
+* CAPEX depreciation tax shield (15%)
 
-### Setup
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/YOUR_USERNAME/MBedded-Simulation.git](https://github.com/YOUR_USERNAME/MBedded-Simulation.git)
-   cd MBedded-Simulation
+---
+
+## 📈 Visual Outputs
+
+### 1. SLA Impact Analysis
+
+![SLA Impact](images/pitch_sla_impact_bar.png)
+
+### 2. Profitability Waterfall
+
+![Waterfall](images/pitch_waterfall.png)
+
+### 3. Break-even Curve
+
+![Break-even](images/pitch_breakeven_line.png)
+
+---
+
+## 🏗️ Architecture
+
+**Pipeline:**
+Data → Financial Engine → Visualization
+
+**Tech Stack:**
+
+* Python
+* Pandas
+* NumPy
+* Matplotlib
+
+**Structure:**
+
+```
+fmcg-supply-chain-simulation/
+│
+├── src/
+│   ├── data_generator.py
+│   ├── financial_engine.py
+│   └── visualizer.py
+│
+├── data/
+├── images/
+├── config.py
+├── main.py
+└── README.md
+```
+
+---
+
+## ▶️ How to Run
+
+```bash
+git clone https://github.com/anvesh-27/fmcg-supply-chain-simulation.git
+cd fmcg-supply-chain-simulation
+
+pip install pandas matplotlib numpy
+python main.py
+```
+
+---
+
+## 🚀 Why This Project Matters
+
+This project demonstrates:
+
+* Real-world business problem solving
+* Financial modeling & simulation
+* Data-driven decision making
+* Understanding of supply chain economics
+* Ability to connect engineering with business impact
+
+---
+
+## 🔮 Future Improvements
+
+* Interactive dashboard (Streamlit)
+* Sensitivity / what-if analysis
+* Integration with real FMCG datasets
+* Scenario simulation (pricing, scale, exports)
+
+---
