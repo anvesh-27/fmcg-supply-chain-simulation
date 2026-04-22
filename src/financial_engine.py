@@ -68,10 +68,17 @@ def run_financial_math():
     }).reset_index()
     daily_df.rename(columns={'Kirana_Bleed_Base': 'Kirana_Bleed', 'MT_Total_Bleed': 'MT_Bleed'}, inplace=True)
 
+    # ADD THIS NEW BLOCK: 5.5 IN-FACTORY YIELD LOSS
+    # ==========================================
+    daily_df['Trad_Factory_Scrap_Cost'] = daily_df['Quantity_Shipped'] * Config.TRAD_IN_FACTORY_SCRAP * Config.COGS_PER_UNIT
+    daily_df['MBed_Factory_Scrap_Cost'] = daily_df['Quantity_Shipped'] * Config.MBED_IN_FACTORY_SCRAP * Config.COGS_PER_UNIT
+
 
     # --- 6. TRADITIONAL COST TRAJECTORY ---
     daily_df['Trad_OPEX'] = daily_df['Quantity_Shipped'] * Config.TRAD_OPEX_PER_UNIT
-    daily_df['Trad_Daily_Total_Cost'] = daily_df['Trad_OPEX'] + daily_df['Kirana_Bleed'] + daily_df['MT_Bleed']
+    
+    # ADD the Trad_Factory_Scrap_Cost to the daily total here:
+    daily_df['Trad_Daily_Total_Cost'] = daily_df['Trad_OPEX'] + daily_df['Kirana_Bleed'] + daily_df['MT_Bleed'] + daily_df['Trad_Factory_Scrap_Cost']
     daily_df['Trad_Cumulative_Cost'] = daily_df['Trad_Daily_Total_Cost'].cumsum()
 
     # --- MODULE A: RELATIVE OEE (FOUND PROFIT) ---
@@ -90,12 +97,18 @@ def run_financial_math():
     daily_df['Daily_Tax_Shield'] = annual_tax_shield / 365.0
 
 
-    # --- 7. M-BEDDED TRAJECTORY ---
+   # --- 7. M-BEDDED TRAJECTORY ---
     daily_df['MBed_OPEX'] = daily_df['Quantity_Shipped'] * Config.MBED_OPEX_PER_UNIT
-    daily_df['MBed_Daily_Total_Cost'] = daily_df['MBed_OPEX'] - daily_df['Daily_Found_Profit'] - daily_df['Daily_Tax_Shield']
-    daily_df['MBed_Cumulative_Cost'] = daily_df['MBed_Daily_Total_Cost'].cumsum() + Config.MBED_CAPEX
+    
+    # ADD the MBed_Factory_Scrap_Cost to the daily total here:
+    daily_df['MBed_Daily_Total_Cost'] = daily_df['MBed_OPEX'] - daily_df['Daily_Found_Profit'] - daily_df['Daily_Tax_Shield'] + daily_df['MBed_Factory_Scrap_Cost']
 
+    # Absorb the ₹35L CAPEX plus the ₹7.7L Factory Downtime Debt
+    total_day_zero_investment = Config.MBED_CAPEX + Config.IMPLEMENTATION_DEBT
+    daily_df['MBed_Cumulative_Cost'] = daily_df['MBed_Daily_Total_Cost'].cumsum() + total_day_zero_investment
+    
     # --- 8. BREAK-EVEN MATH ---
+
     break_even_mask = daily_df['MBed_Cumulative_Cost'] < daily_df['Trad_Cumulative_Cost']
     
     total_trad = daily_df['Trad_Cumulative_Cost'].iloc[-1]
